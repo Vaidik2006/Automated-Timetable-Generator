@@ -33,12 +33,14 @@ A dynamic and constraint-based timetable generator built using **Node.js** and a
    cd timetable-generator
 
 2. Install dependencies
+    ```bash
    npm install
 
-3. Start the server 
-  node timetable_generator_node.js
+4. Start the server
+   ```bash 
+   node timetable_generator_node.js
 
-4. Visit app in browser
+6. Visit app in browser
    http://localhost:4000
 
 📋 Sample Inputs
@@ -61,7 +63,7 @@ Breaks are automatically inserted (e.g., after period 2).
 
 Data is dynamically handled through a POST request from the frontend.
 
-##📈 Future Enhancements
+## 📈 Future Enhancements
 Export to PDF or Excel
 
 User login and admin panel
@@ -70,5 +72,5 @@ More advanced subject/teacher preference logic
 
 Improved UI with React or Vue
 
-##🤝 Contributing
+## 🤝 Contributing
 Pull requests are welcome! For major changes, open an issue first to discuss what you'd like to change.
