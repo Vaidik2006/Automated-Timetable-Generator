@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Timetable Generator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #cbd5e1, #e0f2fe);
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: #fff;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #1e40af;
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-top: 15px;
+      color: #334155;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-top: 5px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      background-color: #f1f5f9;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      background-color: #fff;
+    }
+
+    .subject-entry {
+      background-color: #f9fafb;
+      padding: 20px;
+      border-radius: 12px;
+      margin-top: 20px;
+      border-left: 4px solid #3b82f6;
+    }
+
+    .subject-entry h3 {
+      margin: 0 0 10px;
+      color: #2563eb;
+    }
+
+    button {
+      display: inline-block;
+      margin-top: 25px;
+      background: linear-gradient(to right, #2563eb, #60a5fa);
+      color: white;
+      font-weight: bold;
+      padding: 14px 28px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(to right, #1e3a8a, #3b82f6);
+      transform: translateY(-2px);
+    }
+
+    #generateBtn {
+      display: block;
+      margin: 30px auto 0;
+    }
+
+    #timetable {
+      margin-top: 40px;
+      background: #f0f9ff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+
+    .progress {
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .progress:before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background-color: #e2e8f0;
+      z-index: 0;
+      transform: translateY(-50%);
+    }
+
+    .step {
+      background-color: #60a5fa;
+      color: white;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1;
+      font-weight: bold;
+    }
+
+    .hide {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧠 Smart Timetable Generator</h1>
+
+    <div class="progress">
+      <div class="step">1</div>
+      <div class="step">2</div>
+    </div>
+
+    <!-- Step 1: Basic Info -->
+    <form id="basicForm">
+      <label for="classes">👨‍🏫 Number of Classes:</label>
+      <input type="number" id="classes" min="1" required>
+
+      <label for="days">📅 Number of Days:</label>
+      <input type="number" id="days" min="1" required>
+
+      <label for="periods">⏰ Periods per Day:</label>
+      <input type="number" id="periods" min="1" required>
+
+      <label for="subjectCount">📚 Number of Subjects:</label>
+      <input type="number" id="subjectCount" min="1" required>
+
+      <button type="submit">Next ➡️</button>
+    </form>
+
+    <!-- Step 2: Subject Entry -->
+    <form id="fullForm" class="hide">
+      <div id="subjectInputs"></div>
+      <button type="submit" id="generateBtn">📅 Generate Timetable</button>
+    </form>
+
+    <!-- Output -->
+    <div id="timetable" class="hide">
+      <h2>📊 Timetable Preview:</h2>
+      <pre id="timetableOutput">Generating...</pre>
+    </div>
+  </div>
+
+  <script>
+    const basicForm = document.getElementById('basicForm');
+    const fullForm = document.getElementById('fullForm');
+    const subjectInputs = document.getElementById('subjectInputs');
+    const timetableOutput = document.getElementById('timetableOutput');
+    const timetable = document.getElementById('timetable');
+
+    let globalData = {};
+
+    basicForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      globalData.CLASSES = +document.getElementById('classes').value;
+      globalData.DAYS = +document.getElementById('days').value;
+      globalData.PERIODS = +document.getElementById('periods').value;
+      globalData.subjectCount = +document.getElementById('subjectCount').value;
+
+      subjectInputs.innerHTML = '';
+      for (let i = 0; i < globalData.subjectCount; i++) {
+        const div = document.createElement('div');
+        div.className = 'subject-entry';
+        div.innerHTML = `
+          <h3>📘 Subject ${i + 1}</h3>
+          <label>Subject Name: <input type="text" name="subjectName${i}" required></label>
+          <label>Weekly Lecture Limit: <input type="number" name="limit${i}" min="1" required></label>
+          <label>Teacher 1 Name: <input type="text" name="teacher1_${i}" required></label>
+          <label>Teacher 2 Name: <input type="text" name="teacher2_${i}" required></label>
+        `;
+        subjectInputs.appendChild(div);
+      }
+
+      basicForm.classList.add('hide');
+      fullForm.classList.remove('hide');
+    });
+
+    fullForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const formData = new FormData(fullForm);
+      const subjects = [];
+
+      for (let i = 0; i < globalData.subjectCount; i++) {
+        subjects.push({
+          name: formData.get(`subjectName${i}`),
+          limit: formData.get(`limit${i}`),
+          teacher1: formData.get(`teacher1_${i}`),
+          teacher2: formData.get(`teacher2_${i}`),
+        });
+      }
+
+      const postData = {
+        CLASSES: globalData.CLASSES,
+        DAYS: globalData.DAYS,
+        PERIODS: globalData.PERIODS,
+        subjects,
+        freePeriods: [],
+        teacherDayOffInput: []
+      };
+
+      fetch('/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(postData),
+      })
+      .then(res => res.text())
+      .then(data => {
+        timetable.classList.remove('hide');
+        timetableOutput.textContent = data;
+      })
+      .catch(err => {
+        timetable.classList.remove('hide');
+        timetableOutput.textContent = '❌ Error generating timetable.';
+        console.error(err);
+      });
+    });
+  </script>
+</body>
+</html>
